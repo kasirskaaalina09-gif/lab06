@@ -9,7 +9,7 @@ $ open https://travis-ci.org
 ## Tasks
 
 - [ ] 1. Авторизоваться на сервисе **Travis CI** с использованием **GitHub** аккаунта
-- [ ] 2. Создать публичный репозиторий с названием **lab04** на сервисе **GitHub**
+- [ ] 2. Создать публичный репозиторий с названием **lab05** на сервисе **GitHub**
 - [ ] 3. Ознакомиться со ссылками учебного материала
 - [ ] 4. Включить интеграцию сервиса **Travis CI** с созданным репозиторием
 - [ ] 5. Получить токен для **Travis CLI** с правами **repo** и **user**
@@ -41,10 +41,10 @@ $ gem install travis
 ```
 
 ```sh
-$ git clone https://github.com/${GITHUB_USERNAME}/lab03 projects/lab04
-$ cd projects/lab04
+$ git clone https://github.com/${GITHUB_USERNAME}/lab03 projects/lab05
+$ cd projects/lab05
 $ git remote remove origin
-$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab04
+$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab05
 ```
 
 ```sh
