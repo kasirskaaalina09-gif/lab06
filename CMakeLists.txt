@@ -10,49 +10,127 @@ option(BUILD_TESTS "Build tests" OFF)
 
 project(print)
 
-add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
+if(BUILD_TESTS)
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
+endif()
+
+add_library(print STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp
+)
 
 target_include_directories(print PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 if(BUILD_EXAMPLES)
-  file(GLOB EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp")
-  foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
-    get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
-    add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
-    target_link_libraries(${EXAMPLE_NAME} print)
-    install(TARGETS ${EXAMPLE_NAME}
-      RUNTIME DESTINATION bin
+
+    file(GLOB EXAMPLE_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp"
     )
-  endforeach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+
+    foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+
+        get_filename_component(
+            EXAMPLE_NAME
+            ${EXAMPLE_SOURCE}
+            NAME_WE
+        )
+
+        add_executable(
+            ${EXAMPLE_NAME}
+            ${EXAMPLE_SOURCE}
+        )
+
+        target_link_libraries(
+            ${EXAMPLE_NAME}
+            print
+        )
+
+        install(
+            TARGETS ${EXAMPLE_NAME}
+            RUNTIME DESTINATION bin
+        )
+
+    endforeach()
+
 endif()
 
-install(TARGETS print
+install(
+    TARGETS print
     EXPORT print-config
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
 )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-install(EXPORT print-config DESTINATION cmake)
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION include
+)
+
+install(
+    EXPORT print-config
+    DESTINATION cmake
+)
 
 add_subdirectory(formatter_lib)
 add_subdirectory(formatter_ex_lib)
 add_subdirectory(solver_lib)
 add_subdirectory(hello_world_application)
 add_subdirectory(solver_application)
+add_subdirectory(banking)
+
 if(BUILD_TESTS)
-  enable_testing()
 
-  add_subdirectory(third-party/gtest)
+    enable_testing()
 
-  file(GLOB ${PROJECT_NAME}_TEST_SOURCES tests/*.cpp)
+    add_subdirectory(third-party/gtest)
 
-  add_executable(check ${${PROJECT_NAME}_TEST_SOURCES})
+    file(GLOB ${PROJECT_NAME}_TEST_SOURCES
+        tests/*.cpp
+    )
 
-  target_link_libraries(check ${PROJECT_NAME} gtest_main)
+    add_executable(
+        check
+        ${${PROJECT_NAME}_TEST_SOURCES}
+    )
 
-  add_test(NAME check COMMAND check)
+    target_link_libraries(
+        check
+        ${PROJECT_NAME}
+        gtest_main
+    )
+
+    add_test(
+        NAME check
+        COMMAND check
+    )
+
+    add_executable(
+        banking_tests
+        banking/tests/test_account.cpp
+        banking/tests/test_transaction.cpp
+    )
+
+    target_include_directories(
+        banking_tests PUBLIC
+        banking
+    )
+
+    target_link_libraries(
+        banking_tests
+        banking
+        gtest
+        gtest_main
+        gmock
+        pthread
+    )
+
+    add_test(
+        NAME banking_tests
+        COMMAND banking_tests
+    )
+
 endif()
+
