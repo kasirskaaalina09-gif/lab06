@@ -6,7 +6,8 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build_linux:
+    name: Build Linux packages
     runs-on: ubuntu-latest
 
     steps:
@@ -36,9 +37,32 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-packages
+          name: linux-packages
           path: |
             build/*.tar.gz
             build/*.deb
             build/*.rpm
+
+  build_macos:
+    name: Build macOS package (dmg)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure project
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project
+        run: cmake --build build
+
+      - name: Package DMG
+        run: cd build && cpack -G DragNDrop -C Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-package
+          path: build/*.dmg
 
