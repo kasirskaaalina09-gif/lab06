@@ -1,40 +1,37 @@
-name: CI
+name: Create Release Packages
 
 on:
   push:
-    branches: [ master, main ]
-
-  pull_request:
-    branches: [ master, main ]
+    tags:
+      - 'v*'
 
 jobs:
-  build:
+  build_linux:
+    name: Build Linux packages
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake lcov gcovr libgtest-dev libgmock-dev
+      - name: Install RPM tools
+        run: sudo apt-get update && sudo apt-get install -y rpm
 
-      - name: Configure CMake with coverage
-        run: cmake -B _build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -O0 -g -w"
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build _build
+        run: cmake --build build --config Release
 
-      - name: Run tests
-        working-directory: _build
-        run: ctest --verbose
+      - name: Package DEB
+        run: cd build && cpack -G DEB
 
-      - name: Collect coverage
-        working-directory: _build
-        run: |
-          gcovr -r .. \
-            --filter '.*banking/.*' \
-            --exclude '.*tests.*' \
-            --exclude '.*mocks.*' \
-            --xml coverage.xml
+      - name: Package RPM
+        run: cd build && cpack -G RPM
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: |
+            build/*.deb
+            build/*.rpm
