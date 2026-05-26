@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -44,12 +43,11 @@ jobs:
             build/*.rpm
 
   build_macos:
-    name: Build macOS package (dmg)
+    name: Build macOS package
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Configure project
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -57,7 +55,7 @@ jobs:
       - name: Build project
         run: cmake --build build
 
-      - name: Package macOS archive
+      - name: Package TGZ
         run: cd build && cpack -G TGZ
 
       - name: Upload artifact
@@ -65,4 +63,22 @@ jobs:
         with:
           name: macos-package
           path: build/*.tar.gz
+
+  create_release:
+    name: Create GitHub Release
+    needs: [build_linux, build_macos]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.tar.gz
 
