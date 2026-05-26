@@ -30,11 +30,6 @@ $ source scripts/activate
 $ git clone https://github.com/${GITHUB_USERNAME}/lab04 projects/lab05
 ```
 
-Вывод:
-
-```sh
-```
-
 ```sh
 $ cd projects/lab05
 $ git remote remove origin
