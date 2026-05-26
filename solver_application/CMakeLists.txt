@@ -12,3 +12,7 @@ else()
 endif()
 
 target_link_libraries(solver_application formatter_ex solver)
+
+install(TARGETS solver_application
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION bin)
