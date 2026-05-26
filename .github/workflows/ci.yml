@@ -11,89 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential rpm
-
-      - name: Configure project
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build project
-        run: cmake --build build
-
-      - name: Package TGZ
-        run: cd build && cpack -G TGZ
-
-      - name: Package DEB
-        run: cd build && cpack -G DEB
-
-      - name: Package RPM
-        run: cd build && cpack -G RPM
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-packages
-          path: |
-            build/*.tar.gz
-            build/*.deb
-            build/*.rpm
-
-  build_macos:
-    name: Build macOS package
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure project
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build project
-        run: cmake --build build
-
-      - name: Package TGZ
-        run: cd build && cpack -G TGZ
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-package
-          path: build/*.tar.gz
-
-  create_release:
-    name: Create GitHub Release
-    needs: [build_linux, build_macos]
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: artifacts/**/*.tar.gz
-name: Create Release Packages
-
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  build_linux:
-    name: Build Linux packages
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -177,4 +94,3 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-
