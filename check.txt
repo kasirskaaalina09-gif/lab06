@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 vboxuser@My-ubuntu-linux:~$ cd ~/kasirskaalina09-gif/workspace
 bash: cd: /home/vboxuser/kasirskaalina09-gif/workspace: No such file or directory
 vboxuser@My-ubuntu-linux:~$ cd ~/kasirskaaalina09-gif/workspace
@@ -229,6 +236,27 @@ CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
 
   Update the VERSION argument <min> value or use a ...<max> suffix to tell
   CMake that the project does not need compatibility with older versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- The C compiler identification is GNU 13.3.0
