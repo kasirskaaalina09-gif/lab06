@@ -57,8 +57,8 @@ jobs:
       - name: Build project
         run: cmake --build build
 
-      - name: Package DMG
-        run: cd build && cpack -G DragNDrop -C Release
+      - name: Package macOS archive
+        run: cd build && cpack -G TGZ
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
