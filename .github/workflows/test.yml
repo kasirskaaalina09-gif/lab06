@@ -1,0 +1,16 @@
+name: debug-actions
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Print message
+        run: echo "HELLO FROM GITHUB ACTIONS 🚀"
